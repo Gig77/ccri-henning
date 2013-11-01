@@ -10,10 +10,11 @@ use Getopt::Long;
 use Tabix;
 use Carp;
 
-my ($vcf_out, $header, $rejected_variants_file);
+my ($vcf_out, $header, $rejected_variants_file, $patient);
 my ($rmsk_file, $simplerepeat_file, $blacklist_file, $segdup_file, $g1k_accessible_file, $cosmic_mutation_file);
 GetOptions
 (
+	"patient=s" => \$patient,  # patient ID
 	"vcf-out=s" => \$vcf_out,  # filtered VCF output file
 	"header" => \$header,  # if set, write header line to output
 	"rmsk-file=s" => \$rmsk_file, # TABIX indexed UCSC table rmsk
@@ -68,7 +69,7 @@ if ($header)
 	print "tsegdup\t";
 	print "blacklist\t";
 	print "g1k-accessible\n";	
-#	exit;
+	exit;
 }
 
 my $debug = 1;
@@ -77,6 +78,7 @@ my $vcf_file = $ARGV[0] or croak "ERROR: VCF file not specified\n";
 my $var_type = $ARGV[1] or croak "ERROR: variant type not specified ('snp' or 'indel')\n";
 croak "ERROR: invalid variant type: $var_type\n" if ($var_type ne 'snp' and $var_type ne 'indel');
 
+croak "ERROR: --patient not specified" if (!$patient);
 croak "ERROR: --rmsk-file not specified" if (!$rmsk_file);
 croak "ERROR: --simpleRepeat-file not specified" if (!$simplerepeat_file);
 croak "ERROR: --blacklist-file not specified" if (!$blacklist_file);
@@ -128,6 +130,7 @@ while(<C>)
 		$tumour_origin, $age, $comments) = split /\t/;
 	
 	next if ($mutation_somatic_status ne "Confirmed somatic variant");
+	$gene_name =~ s/_ENST.*//;
 	
 	$cosmic{$mutation_GRCh37_genome_position} = defined $cosmic{$mutation_GRCh37_genome_position} ? $cosmic{$mutation_GRCh37_genome_position} + 1 : 1;
 	$cosmic_leuk{$mutation_GRCh37_genome_position} = defined $cosmic_leuk{$mutation_GRCh37_genome_position} ? $cosmic_leuk{$mutation_GRCh37_genome_position} + 1 : 1
@@ -337,7 +340,7 @@ while (my $line = $vcf->next_line())
 	
 	print VCFOUT "$line" if ($vcf_out);
 	
-	print "MHH_121\t";		
+	print "$patient\t";		
 	print "$var_type\t";
 	print $variant_stati{$x->{INFO}{'SS'}}, "\t";
 	print $reject ? "REJECT\t" : "$status\t";
