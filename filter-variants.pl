@@ -4,10 +4,10 @@ use strict;
 use lib "$ENV{HOME}/generic/scripts";
 use Generic;
 use Log::Log4perl qw(:easy);
+use Tabix;
 use Vcf;
 use Data::Dumper;
 use Getopt::Long;
-use Tabix;
 use Carp;
 
 my ($vcf_out, $header, $rejected_variants_file, $patient);

@@ -1,10 +1,11 @@
-export SHELLOPTS:=errexit:pipefail    # exit with error code if any command in a pipe fails
-SHELL=/bin/bash                       # required to make pipefail work
-.SECONDARY:                           # do not delete any intermediate files
+export SHELLOPTS:=errexit:pipefail
+SHELL=/bin/bash  # required to make pipefail work
+.SECONDARY:      # do not delete any intermediate files
 
-MERGE = ~/tools/samtools-0.1.19/samtools merge -f $@.part $^ 2>&1 | tee -a make.log; mv $@.part $@; rm $^
+MERGE = ~/tools/samtools-0.1.19/samtools merge -f $@.part $^; mv $@.part $@; rm $^
+LOG = perl -ne 'use POSIX qw(strftime); $$|=1; print strftime("%F %02H:%02M:%S ", localtime), $$ARGV[0], "$@: $$_";'
 
-all: TEST
+all: MHH_115 MHH_121 MHH_126 MHH_130 MHH_133 MHH_136 MHH_139
 
 filtered-variants.tsv: filtered-variants/MHH_115.tsv filtered-variants/MHH_121.tsv filtered-variants/MHH_126.tsv filtered-variants/MHH_130.tsv filtered-variants/MHH_133.tsv filtered-variants/MHH_136.tsv filtered-variants/MHH_139.tsv 
 	perl ~/henning/scripts/filter-variants.pl --header 1 > $@.part
@@ -16,7 +17,7 @@ TEST_BAM = bam/TEST_s_1.bwa.bam bam/TEST_s_2.bwa.bam
 bam/TEST.bwa.merged.bam: $(TEST_BAM)
 	$(MERGE)
 
-MHH_115: filtered-variants/MHH_115.tsv MHH_115_tumor MHH_115_normal
+MHH_115: varscan/MHH_115.varscan.snp.dbsnp.snpeff.vcf MHH_115_tumor MHH_115_normal
 MHH_115_tumor: picard/MHH_115.tumor.multiplemetrics picard/MHH_115.tumor.hs_metrics 
 MHH_115_normal: picard/MHH_115.normal.multiplemetrics picard/MHH_115.normal.hs_metrics
 bam/MHH_115.tumor.bwa.merged.bam: bam/AML_015_s_1.bwa.bam bam/AML_015_s_2.bwa.bam bam/AML_015_s_3.bwa.bam bam/AML_015_s_4.bwa.bam bam/AML_015_s_5.bwa.bam bam/AML_015_s_6.bwa.bam bam/AML_015_s_7.bwa.bam bam/AML_015_s_8.bwa.bam
@@ -24,7 +25,7 @@ bam/MHH_115.tumor.bwa.merged.bam: bam/AML_015_s_1.bwa.bam bam/AML_015_s_2.bwa.ba
 bam/MHH_115.normal.bwa.merged.bam: bam/AML_016_s_1.bwa.bam bam/AML_016_s_2.bwa.bam bam/AML_016_s_3.bwa.bam bam/AML_016_s_4.bwa.bam bam/AML_016_s_5.bwa.bam bam/AML_016_s_6.bwa.bam bam/AML_016_s_7.bwa.bam bam/AML_016_s_8.bwa.bam
 	$(MERGE)
 
-MHH_121: filtered-variants/MHH_121.tsv MHH_121_tumor MHH_121_normal
+MHH_121: varscan/MHH_121.varscan.snp.dbsnp.snpeff.vcf MHH_121_tumor MHH_121_normal
 MHH_121_tumor: bam/MHH_121.tumor.bwa.merged.dup.bam picard/MHH_121.tumor.multiplemetrics picard/MHH_121.tumor.hs_metrics 
 MHH_121_normal: bam/MHH_121.normal.bwa.merged.dup.bam picard/MHH_121.normal.multiplemetrics picard/MHH_121.normal.hs_metrics
 bam/MHH_121.tumor.bwa.merged.bam: bam/AML_021_s_1.bwa.bam bam/AML_021_s_2.bwa.bam bam/AML_021_s_3.bwa.bam bam/AML_021_s_4.bwa.bam bam/AML_021_s_5.bwa.bam bam/AML_021_s_6.bwa.bam bam/AML_021_s_7.bwa.bam bam/AML_021_s_8.bwa.bam
@@ -32,7 +33,7 @@ bam/MHH_121.tumor.bwa.merged.bam: bam/AML_021_s_1.bwa.bam bam/AML_021_s_2.bwa.ba
 bam/MHH_121.normal.bwa.merged.bam: bam/AML_022_s_1.bwa.bam bam/AML_022_s_2.bwa.bam bam/AML_022_s_3.bwa.bam bam/AML_022_s_4.bwa.bam bam/AML_022_s_5.bwa.bam bam/AML_022_s_6.bwa.bam bam/AML_022_s_7.bwa.bam bam/AML_022_s_8.bwa.bam
 	$(MERGE)
 
-MHH_126: filtered-variants/MHH_126.tsv MHH_126_tumor MHH_126_normal
+MHH_126: varscan/MHH_126.varscan.snp.dbsnp.snpeff.vcf MHH_126_tumor MHH_126_normal
 MHH_126_tumor: picard/MHH_126.tumor.multiplemetrics picard/MHH_126.tumor.hs_metrics 
 MHH_126_normal: picard/MHH_126.normal.multiplemetrics picard/MHH_126.normal.hs_metrics
 bam/MHH_126.tumor.bwa.merged.bam: bam/AML_026_s_1.bwa.bam bam/AML_026_s_2.bwa.bam bam/AML_026_s_3.bwa.bam bam/AML_026_s_4.bwa.bam bam/AML_026_s_5.bwa.bam bam/AML_026_s_6.bwa.bam bam/AML_026_s_7.bwa.bam bam/AML_026_s_8.bwa.bam
@@ -40,7 +41,7 @@ bam/MHH_126.tumor.bwa.merged.bam: bam/AML_026_s_1.bwa.bam bam/AML_026_s_2.bwa.ba
 bam/MHH_126.normal.bwa.merged.bam: bam/AML_028_s_1.bwa.bam bam/AML_028_s_2.bwa.bam bam/AML_028_s_3.bwa.bam bam/AML_028_s_4.bwa.bam bam/AML_028_s_5.bwa.bam bam/AML_028_s_6.bwa.bam bam/AML_028_s_7.bwa.bam bam/AML_028_s_8.bwa.bam
 	$(MERGE)
 
-MHH_130: filtered-variants/MHH_130.tsv MHH_130_tumor MHH_130_normal
+MHH_130: varscan/MHH_130.varscan.snp.dbsnp.snpeff.vcf MHH_130_tumor MHH_130_normal
 MHH_130_tumor: picard/MHH_130.tumor.multiplemetrics picard/MHH_130.tumor.hs_metrics 
 MHH_130_normal: picard/MHH_130.normal.multiplemetrics picard/MHH_130.normal.hs_metrics
 bam/MHH_130.tumor.bwa.merged.bam: bam/AML_030_s_1.bwa.bam bam/AML_030_s_2.bwa.bam bam/AML_030_s_3.bwa.bam bam/AML_030_s_4.bwa.bam bam/AML_030_s_5.bwa.bam bam/AML_030_s_6.bwa.bam bam/AML_030_s_7.bwa.bam bam/AML_030_s_8.bwa.bam
@@ -48,7 +49,7 @@ bam/MHH_130.tumor.bwa.merged.bam: bam/AML_030_s_1.bwa.bam bam/AML_030_s_2.bwa.ba
 bam/MHH_130.normal.bwa.merged.bam: bam/AML_031_s_1.bwa.bam bam/AML_031_s_2.bwa.bam bam/AML_031_s_3.bwa.bam bam/AML_031_s_4.bwa.bam bam/AML_031_s_5.bwa.bam bam/AML_031_s_6.bwa.bam bam/AML_031_s_7.bwa.bam bam/AML_031_s_8.bwa.bam
 	$(MERGE)
 
-MHH_133: filtered-variants/MHH_133.tsv MHH_133_tumor MHH_133_normal
+MHH_133: varscan/MHH_133.varscan.snp.dbsnp.snpeff.vcf MHH_133_tumor MHH_133_normal
 MHH_133_tumor: picard/MHH_133.tumor.multiplemetrics picard/MHH_133.tumor.hs_metrics 
 MHH_133_normal: picard/MHH_133.normal.multiplemetrics picard/MHH_133.normal.hs_metrics
 bam/MHH_133.tumor.bwa.merged.bam: bam/AML_033_s_1.bwa.bam bam/AML_033_s_2.bwa.bam bam/AML_033_s_3.bwa.bam bam/AML_033_s_4.bwa.bam bam/AML_033_s_5.bwa.bam bam/AML_033_s_6.bwa.bam bam/AML_033_s_7.bwa.bam bam/AML_033_s_8.bwa.bam
@@ -56,7 +57,7 @@ bam/MHH_133.tumor.bwa.merged.bam: bam/AML_033_s_1.bwa.bam bam/AML_033_s_2.bwa.ba
 bam/MHH_133.normal.bwa.merged.bam: bam/AML_034_s_1.bwa.bam bam/AML_034_s_2.bwa.bam bam/AML_034_s_3.bwa.bam bam/AML_034_s_4.bwa.bam bam/AML_034_s_5.bwa.bam bam/AML_034_s_6.bwa.bam bam/AML_034_s_7.bwa.bam bam/AML_034_s_8.bwa.bam
 	$(MERGE)
 
-MHH_136: filtered-variants/MHH_136.tsv MHH_136_tumor MHH_136_normal
+MHH_136: varscan/MHH_136.varscan.snp.dbsnp.snpeff.vcf MHH_136_tumor MHH_136_normal
 MHH_136_tumor: picard/MHH_136.tumor.multiplemetrics picard/MHH_136.tumor.hs_metrics 
 MHH_136_normal: picard/MHH_136.normal.multiplemetrics picard/MHH_136.normal.hs_metrics
 bam/MHH_136.tumor.bwa.merged.bam: bam/AML_036_s_1.bwa.bam bam/AML_036_s_2.bwa.bam bam/AML_036_s_3.bwa.bam bam/AML_036_s_4.bwa.bam bam/AML_036_s_5.bwa.bam bam/AML_036_s_6.bwa.bam bam/AML_036_s_7.bwa.bam bam/AML_036_s_8.bwa.bam
@@ -64,7 +65,7 @@ bam/MHH_136.tumor.bwa.merged.bam: bam/AML_036_s_1.bwa.bam bam/AML_036_s_2.bwa.ba
 bam/MHH_136.normal.bwa.merged.bam: bam/AML_037_s_1.bwa.bam bam/AML_037_s_2.bwa.bam bam/AML_037_s_3.bwa.bam bam/AML_037_s_4.bwa.bam bam/AML_037_s_5.bwa.bam bam/AML_037_s_6.bwa.bam bam/AML_037_s_7.bwa.bam bam/AML_037_s_8.bwa.bam
 	$(MERGE)
 
-MHH_139: filtered-variants/MHH_139.tsv MHH_139_tumor MHH_139_normal
+MHH_139: varscan/MHH_139.varscan.snp.dbsnp.snpeff.vcf MHH_139_tumor MHH_139_normal
 MHH_139_tumor: picard/MHH_139.tumor.multiplemetrics picard/MHH_139.tumor.hs_metrics 
 MHH_139_normal: picard/MHH_139.normal.multiplemetrics picard/MHH_139.normal.hs_metrics
 bam/MHH_139.tumor.bwa.merged.bam: bam/AML_039_s_1.bwa.bam bam/AML_039_s_2.bwa.bam bam/AML_039_s_3.bwa.bam bam/AML_039_s_4.bwa.bam bam/AML_039_s_5.bwa.bam bam/AML_039_s_6.bwa.bam bam/AML_039_s_7.bwa.bam bam/AML_039_s_8.bwa.bam
@@ -134,49 +135,36 @@ AML_026_L%: ~/henning/data/fastq/AB0B88ABXX.%.AML_026.unmapped.bam
 # SAMTOOLS, ALIGNMENT
 #-----------	
 %.sai: %.gz
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
-	~/tools/bwa-0.7.4/bwa aln \
-		-t 1 \
-		~/generic/data/hg19/ucsc.hg19.fasta $^ \
-		2>&1 1> $@.part | tee -a make.log
+	~/tools/bwa-0.7.4/bwa aln -t 1 ~/generic/data/hg19/ucsc.hg19.fasta $^ 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 bam/%.bwa.bam: ~/henning/data/fastq/%_1_sequence.txt.sai ~/henning/data/fastq/%_2_sequence.txt.sai ~/henning/data/fastq/%_1_sequence.txt.gz ~/henning/data/fastq/%_2_sequence.txt.gz
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
-	~/tools/bwa-0.7.4/bwa sampe ~/generic/data/hg19/ucsc.hg19.fasta $^ \
-		| ~/tools/samtools-0.1.19/samtools view -bS - \
-		2>&1 1> $@.part | tee -a make.log
+	sleep `expr $$RANDOM % 60`
+	(~/tools/bwa-0.7.4/bwa sampe ~/generic/data/hg19/ucsc.hg19.fasta $^ \
+		| ~/tools/samtools-0.1.19/samtools view -bS -) 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
-	~/tools/samtools-0.1.19/samtools sort $@ $@.sorted \
-		2>&1 | tee -a make.log
+	~/tools/samtools-0.1.19/samtools sort -m 2G $@ $@.sorted 2>&1 | $(LOG)
 	mv $@.sorted.bam $@
-	rm ~/henning/data/fastq/%_1_sequence.txt.sai ~/henning/data/fastq/%_2_sequence.txt.sai
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
+	rm ~/henning/data/fastq/$*_1_sequence.txt.sai ~/henning/data/fastq/$*_2_sequence.txt.sai
 
 bam/%.bam.bai: bam/%.bam
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	rm -f $@
-	~/tools/samtools-0.1.19/samtools index $^ $@.part 2>&1 | tee -a make.log
+	~/tools/samtools-0.1.19/samtools index $^ $@.part 2>&1 | $(LOG)
 	mv $@.part $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 #-----------	
 # PICARD: MARK DUPLICATES, METRICS
 #-----------	
 bam/%.bwa.merged.dup.bam: bam/%.bwa.merged.bam bam/%.bwa.merged.bam.bai
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	java -Xmx2g -Djava.io.tmpdir=`pwd`/tmp -jar ~/tools/picard-tools-1.101/MarkDuplicates.jar \
 		INPUT=$< \
 		OUTPUT=$@.part \
 		METRICS_FILE=picard/$*.mark_duplicates_metrics \
 		VALIDATION_STRINGENCY=LENIENT \
-		2>&1 | tee -a make.log
+		2>&1 | $(LOG)
 	mv $@.part $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 picard/%.multiplemetrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	java -Xmx2g -Djava.io.tmpdir=`pwd`/tmp -jar ~/tools/picard-tools-1.101/CollectMultipleMetrics.jar \
 		INPUT=$< \
 		OUTPUT=picard/$* \
@@ -185,14 +173,12 @@ picard/%.multiplemetrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
 		PROGRAM=CollectInsertSizeMetrics \
 		PROGRAM=QualityScoreDistribution \
 		PROGRAM=MeanQualityByCycle \
-		2>&1 | tee -a make.log
+		2>&1 | $(LOG)
 	touch $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 picard/%.hs_metrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	# truseq_exome_targeted_regions.hg19.bed.chr downloaded from http://supportres.illumina.com/documents/myillumina/5dfd7e70-c4a5-405a-8131-33f683414fb7/truseq_exome_targeted_regions.hg19.bed.chr.gz
-	~/tools/samtools-0.1.19/samtools view -H bam/$*.bwa.merged.dup.bam > picard/$*.truseq-for-picard.bed
+	~/tools/samtools-0.1.19/samtools view -H bam/$*.bwa.merged.dup.bam 2>&1 1> picard/$*.truseq-for-picard.bed | $(LOG)
 	gawk 'BEGIN { OFS="\t"} {print $$1,$$2,$$3,$$6,$$4 }' ~/generic/data/illumina/truseq_exome_targeted_regions.hg19.bed.chr >> picard/$*.truseq-for-picard.bed
 	java -Xmx2g -Djava.io.tmpdir=`pwd`/tmp -jar ~/tools/picard-tools-1.101/CalculateHsMetrics.jar \
 		BAIT_INTERVALS=picard/$*.truseq-for-picard.bed \
@@ -202,17 +188,15 @@ picard/%.hs_metrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
 		REFERENCE_SEQUENCE=~/generic/data/hg19/ucsc.hg19.fasta \
 		PER_TARGET_COVERAGE=picard/$*.hs_metrics.per_target_coverage.part \
 		VALIDATION_STRINGENCY=LENIENT \
-		2>&1 | tee -a make.log
+		2>&1 | $(LOG)
 	mv picard/$*.hs_metrics.per_target_coverage.part picard/$*.hs_metrics.per_target_coverage
 	rm picard/$*.truseq-for-picard.bed
 	mv $@.part $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 #-----------	
 # VARSCAN
 #-----------	
 varscan/%.varscan.snp.vcf: bam/%.normal.bwa.merged.dup.bam bam/%.tumor.bwa.merged.dup.bam bam/%.normal.bwa.merged.dup.bam.bai bam/%.tumor.bwa.merged.dup.bam.bai
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	java -jar ~/tools/varscan-2.3.6/VarScan.v2.3.6.jar somatic \
 		<(~/tools/samtools-0.1.19/samtools view -b -u -q 1 $(word 1,$^) | ~/tools/samtools-0.1.19/samtools mpileup -f ~/generic/data/hg19/ucsc.hg19.fasta -) \
 		<(~/tools/samtools-0.1.19/samtools view -b -u -q 1 $(word 2,$^) | ~/tools/samtools-0.1.19/samtools mpileup -f ~/generic/data/hg19/ucsc.hg19.fasta -) \
@@ -226,29 +210,24 @@ varscan/%.varscan.snp.vcf: bam/%.normal.bwa.merged.dup.bam bam/%.tumor.bwa.merge
 		--somatic-p-value 1 \
 		--strand-filter 1 \
 		--output-vcf 1 \
-		2>&1 | tee -a make.log
+		2>&1 | $(LOG)
 	mv varscan/$*.varscan.part.snp.vcf varscan/$*.varscan.snp.vcf
 	mv varscan/$*.varscan.part.indel.vcf varscan/$*.varscan.indel.vcf
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 #-----------	
 # SNPEFF
 #-----------	
 varscan/%.varscan.snp.dbsnp.snpeff.vcf: varscan/%.varscan.snp.dbsnp.vcf
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	PWD=$(pwd)
-	(cd ~/tools/snpEff-3.3h; java -Xmx2g -jar snpEff.jar -v -lof hg19 $(PWD)/$< > $(PWD)/$@.part)
+	(cd ~/tools/snpEff-3.3h; java -Xmx2g -jar snpEff.jar -v -lof hg19 $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	mv ~/tools/snpEff-3.3h/snpEff_summary.html snpeff/$*.snpEff_summary.html
 	mv ~/tools/snpEff-3.3h/snpEff_genes.txt snpeff/$*.snpEff_genes.txt
 	mv $@.part $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf
-	echo `date` [START] TARGET=$@ PRE=$^ | tee -a make.log
 	PWD=$(pwd)
-	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< > $(PWD)/$@.part) 
+	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	mv $@.part $@
-	echo `date` [END] TARGET=$@ PRE=$^ | tee -a make.log
 
 #-----------	
 # FINAL LIST
@@ -263,5 +242,5 @@ filtered-variants/%.tsv: varscan/%.varscan.snp.dbsnp.snpeff.vcf ~/henning/script
 		--blacklist-file ~/generic/data/hg19/hg19.wgEncodeDacMapabilityConsensusExcludable.txt.gz \
 		--g1k-accessible ~/generic/data/hg19/paired.end.mapping.1000G..pilot.bed.gz \
 		--cosmic-mutation-file ~/generic/data/cosmic/v65/CosmicMutantExport_v65_280513.tsv \
-		> $@.part
+		2>&1 1> $@.part | $(LOG)
 	mv $@.part $@
