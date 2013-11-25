@@ -219,9 +219,7 @@ varscan/%.varscan.snp.vcf: bam/%.normal.bwa.merged.dup.bam bam/%.tumor.bwa.merge
 #-----------	
 varscan/%.varscan.snp.dbsnp.snpeff.vcf: varscan/%.varscan.snp.dbsnp.vcf
 	PWD=$(pwd)
-	(cd ~/tools/snpEff-3.3h; java -Xmx2g -jar snpEff.jar -v -lof hg19 $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
-	mv ~/tools/snpEff-3.3h/snpEff_summary.html snpeff/$*.snpEff_summary.html
-	mv ~/tools/snpEff-3.3h/snpEff_genes.txt snpeff/$*.snpEff_genes.txt
+	(cd ~/tools/snpEff-3.3h; java -Xmx2g -jar snpEff.jar -v -lof hg19 -stats $(PWD)/snpeff/$*.snpeff.summary.html $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	mv $@.part $@
 
 varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf
