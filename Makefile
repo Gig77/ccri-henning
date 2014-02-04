@@ -225,6 +225,7 @@ varscan/%.varscan.snp.dbsnp.snpeff.vcf: varscan/%.varscan.snp.dbsnp.vcf
 varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf
 	PWD=$(pwd)
 	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
+	test -s $@.part
 	mv $@.part $@
 
 #-----------	
@@ -239,6 +240,6 @@ filtered-variants/%.tsv: varscan/%.varscan.snp.dbsnp.snpeff.vcf ~/henning/script
 		--segdup-file ~/generic/data/hg19/hg19.genomicSuperDups.txt.gz \
 		--blacklist-file ~/generic/data/hg19/hg19.wgEncodeDacMapabilityConsensusExcludable.txt.gz \
 		--g1k-accessible ~/generic/data/hg19/paired.end.mapping.1000G..pilot.bed.gz \
-		--cosmic-mutation-file ~/generic/data/cosmic/v65/CosmicMutantExport_v65_280513.tsv \
+		--cosmic-mutation-file ~/generic/data/cosmic/v67/CosmicMutantExport_v67_241013.tsv \
 		2>&1 1> $@.part | $(LOG)
 	mv $@.part $@
