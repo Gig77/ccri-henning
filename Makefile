@@ -222,9 +222,9 @@ varscan/%.varscan.snp.dbsnp.snpeff.vcf: varscan/%.varscan.snp.dbsnp.vcf
 	(cd ~/tools/snpEff-3.3h; java -Xmx2g -jar snpEff.jar -v -lof hg19 -stats $(PWD)/snpeff/$*.snpeff.summary.html $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	mv $@.part $@
 
-varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf
+varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/generic/data/ncbi/common_no_known_medical_impact_20130930.chr.vcf
 	PWD=$(pwd)
-	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v ~/tools/snpEff-3.3h/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
+	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v ~/generic/data/ncbi/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	test -s $@.part
 	mv $@.part $@
 
