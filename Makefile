@@ -8,7 +8,7 @@ LOG = perl -ne 'use POSIX qw(strftime); $$|=1; print strftime("%F %02H:%02M:%S "
 all: MHH_115 MHH_121 MHH_126 MHH_130 MHH_133 MHH_136 MHH_139
 
 filtered-variants.tsv: filtered-variants/MHH_115.tsv filtered-variants/MHH_121.tsv filtered-variants/MHH_126.tsv filtered-variants/MHH_130.tsv filtered-variants/MHH_133.tsv filtered-variants/MHH_136.tsv filtered-variants/MHH_139.tsv 
-	perl ~/henning/scripts/filter-variants.pl --header 1 > $@.part
+	perl /mnt/projects/henning/scripts/filter-variants.pl --header 1 > $@.part
 	cat $^ >> $@.part
 	mv $@.part $@
 
@@ -76,60 +76,60 @@ bam/MHH_139.normal.bwa.merged.bam: bam/AML_040_s_1.bwa.bam bam/AML_040_s_2.bwa.b
 #-----------	
 # PREPARE FASTQ INPUT
 #-----------	
-~/henning/data/fastq/TEST_s_1_1_sequence.txt.gz: ~/henning/data/fastq/AML_022_s_1_1_sequence.txt.gz ~/henning/data/fastq/AML_022_s_1_2_sequence.txt.gz ~/henning/data/fastq/AML_022_s_2_1_sequence.txt.gz ~/henning/data/fastq/AML_022_s_2_2_sequence.txt.gz
-	~/tools/seqtk/seqtk sample -s100 ~/henning/data/fastq/AML_022_s_1_1_sequence.txt.gz 10000 | gzip > ~/henning/data/fastq/TEST_s_1_1_sequence.txt.gz
-	~/tools/seqtk/seqtk sample -s100 ~/henning/data/fastq/AML_022_s_1_2_sequence.txt.gz 10000 | gzip > ~/henning/data/fastq/TEST_s_1_2_sequence.txt.gz
-	~/tools/seqtk/seqtk sample -s324 ~/henning/data/fastq/AML_022_s_2_1_sequence.txt.gz 10000 | gzip > ~/henning/data/fastq/TEST_s_2_1_sequence.txt.gz
-	~/tools/seqtk/seqtk sample -s324 ~/henning/data/fastq/AML_022_s_2_2_sequence.txt.gz 10000 | gzip > ~/henning/data/fastq/TEST_s_2_2_sequence.txt.gz
+/mnt/projects/henning/data/fastq/TEST_s_1_1_sequence.txt.gz: /mnt/projects/henning/data/fastq/AML_022_s_1_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_022_s_1_2_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_022_s_2_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_022_s_2_2_sequence.txt.gz
+	~/tools/seqtk/seqtk sample -s100 /mnt/projects/henning/data/fastq/AML_022_s_1_1_sequence.txt.gz 10000 | gzip > /mnt/projects/henning/data/fastq/TEST_s_1_1_sequence.txt.gz
+	~/tools/seqtk/seqtk sample -s100 /mnt/projects/henning/data/fastq/AML_022_s_1_2_sequence.txt.gz 10000 | gzip > /mnt/projects/henning/data/fastq/TEST_s_1_2_sequence.txt.gz
+	~/tools/seqtk/seqtk sample -s324 /mnt/projects/henning/data/fastq/AML_022_s_2_1_sequence.txt.gz 10000 | gzip > /mnt/projects/henning/data/fastq/TEST_s_2_1_sequence.txt.gz
+	~/tools/seqtk/seqtk sample -s324 /mnt/projects/henning/data/fastq/AML_022_s_2_2_sequence.txt.gz 10000 | gzip > /mnt/projects/henning/data/fastq/TEST_s_2_2_sequence.txt.gz
 
 AML_015_input: AML_015_L2 AML_015_L3 AML_015_L4 AML_015_L5 AML_015_L6 AML_015_L7 AML_015_L8
-AML_015_L%: ~/henning/data/fastq/B04GLABXX.%.AML_015.unmapped.bam
-	#curl http://www.biomedical-sequencing.at/DNA/Pediatric_AML_Sequencing/AML_015/B04GLABXX.$*.AML_015.unmapped.bam -so ~/henning/data/fastq/B04GLABXX.$*.AML_015.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/B04GLABXX.$*.AML_015.unmapped.bam F=~/henning/data/fastq/AML_015_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_015_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_015_s_$*_1_sequence.txt ~/henning/data/fastq/AML_015_s_$*_2_sequence.txt
+AML_015_L%: /mnt/projects/henning/data/fastq/B04GLABXX.%.AML_015.unmapped.bam
+	#curl http://www.biomedical-sequencing.at/DNA/Pediatric_AML_Sequencing/AML_015/B04GLABXX.$*.AML_015.unmapped.bam -so /mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_015.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_015.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_015_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_015_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_015_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_015_s_$*_2_sequence.txt
 AML_016_input: AML_016_L1 AML_016_L2 AML_016_L3 AML_016_L4 AML_016_L5 AML_016_L6 AML_016_L7 AML_016_L8
-AML_016_L%: ~/henning/data/fastq/B04GLABXX.%.AML_016.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/B04GLABXX.$*.AML_016.unmapped.bam F=~/henning/data/fastq/AML_016_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_016_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_016_s_$*_1_sequence.txt ~/henning/data/fastq/AML_016_s_$*_2_sequence.txt
+AML_016_L%: /mnt/projects/henning/data/fastq/B04GLABXX.%.AML_016.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_016.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_016_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_016_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_016_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_016_s_$*_2_sequence.txt
 AML_026_input: AML_026_L1 AML_026_L2 AML_026_L3 AML_026_L4 AML_026_L5 AML_026_L6 AML_026_L7 AML_026_L8
-AML_026_L%: ~/henning/data/fastq/AB0B88ABXX.%.AML_026.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/AB0B88ABXX.$*.AML_026.unmapped.bam F=~/henning/data/fastq/AML_026_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_026_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_026_s_$*_1_sequence.txt ~/henning/data/fastq/AML_026_s_$*_2_sequence.txt
+AML_026_L%: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_026.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_026.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_026_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_026_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_026_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_026_s_$*_2_sequence.txt
 
-~/henning/data/fastq/AML_028_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_028_s_%_2_sequence.txt.gz: ~/henning/data/fastq/AB0B88ABXX.%.AML_028.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/AB0B88ABXX.$*.AML_028.unmapped.bam F=~/henning/data/fastq/AML_028_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_028_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_028_s_$*_1_sequence.txt ~/henning/data/fastq/AML_028_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/AB0B88ABXX.$*.AML_028.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_028_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_028_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_028.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_028.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_028_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_028_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_028_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_028_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_028.unmapped.bam
 
-~/henning/data/fastq/AML_030_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_030_s_%_2_sequence.txt.gz: ~/henning/data/fastq/AB0B88ABXX.%.AML_030.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/AB0B88ABXX.$*.AML_030.unmapped.bam F=~/henning/data/fastq/AML_030_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_030_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_030_s_$*_1_sequence.txt ~/henning/data/fastq/AML_030_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/AB0B88ABXX.$*.AML_030.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_030_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_030_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_030.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_030.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_030_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_030_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_030_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_030_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_030.unmapped.bam
 
-~/henning/data/fastq/AML_031_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_031_s_%_2_sequence.txt.gz: ~/henning/data/fastq/AB0B88ABXX.%.AML_031.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/AB0B88ABXX.$*.AML_031.unmapped.bam F=~/henning/data/fastq/AML_031_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_031_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_031_s_$*_1_sequence.txt ~/henning/data/fastq/AML_031_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/AB0B88ABXX.$*.AML_031.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_031_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_031_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_031.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_031.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_031_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_031_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_031_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_031_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_031.unmapped.bam
 
-~/henning/data/fastq/AML_033_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_033_s_%_2_sequence.txt.gz: ~/henning/data/fastq/B04GLABXX.%.AML_033.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/B04GLABXX.$*.AML_033.unmapped.bam F=~/henning/data/fastq/AML_033_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_033_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_033_s_$*_1_sequence.txt ~/henning/data/fastq/AML_033_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/B04GLABXX.$*.AML_033.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_033_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_033_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/B04GLABXX.%.AML_033.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_033.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_033_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_033_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_033_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_033_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_033.unmapped.bam
 
-~/henning/data/fastq/AML_034_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_034_s_%_2_sequence.txt.gz: ~/henning/data/fastq/B04GLABXX.%.AML_034.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/B04GLABXX.$*.AML_034.unmapped.bam F=~/henning/data/fastq/AML_034_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_034_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_034_s_$*_1_sequence.txt ~/henning/data/fastq/AML_034_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/B04GLABXX.$*.AML_034.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_034_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_034_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/B04GLABXX.%.AML_034.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_034.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_034_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_034_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_034_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_034_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/B04GLABXX.$*.AML_034.unmapped.bam
 
-~/henning/data/fastq/AML_036_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_036_s_%_2_sequence.txt.gz: ~/henning/data/fastq/AB0B88ABXX.%.AML_036.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/AB0B88ABXX.$*.AML_036.unmapped.bam F=~/henning/data/fastq/AML_036_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_036_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_036_s_$*_1_sequence.txt ~/henning/data/fastq/AML_036_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/AB0B88ABXX.$*.AML_036.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_036_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_036_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_036.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_036.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_036_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_036_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_036_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_036_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_036.unmapped.bam
 
-~/henning/data/fastq/AML_037_s_%_1_sequence.txt.gz ~/henning/data/fastq/AML_037_s_%_2_sequence.txt.gz: ~/henning/data/fastq/AB0B88ABXX.%.AML_037.unmapped.bam
-	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=~/henning/data/fastq/AB0B88ABXX.$*.AML_037.unmapped.bam F=~/henning/data/fastq/AML_037_s_$*_1_sequence.txt F2=~/henning/data/fastq/AML_037_s_$*_2_sequence.txt
-	gzip ~/henning/data/fastq/AML_037_s_$*_1_sequence.txt ~/henning/data/fastq/AML_037_s_$*_2_sequence.txt
-	rm ~/henning/data/fastq/AB0B88ABXX.$*.AML_037.unmapped.bam
+/mnt/projects/henning/data/fastq/AML_037_s_%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/AML_037_s_%_2_sequence.txt.gz: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_037.unmapped.bam
+	java -Xmx2g -jar ~/tools/picard-tools-1.101/SamToFastq.jar I=/mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_037.unmapped.bam F=/mnt/projects/henning/data/fastq/AML_037_s_$*_1_sequence.txt F2=/mnt/projects/henning/data/fastq/AML_037_s_$*_2_sequence.txt
+	gzip /mnt/projects/henning/data/fastq/AML_037_s_$*_1_sequence.txt /mnt/projects/henning/data/fastq/AML_037_s_$*_2_sequence.txt
+	rm /mnt/projects/henning/data/fastq/AB0B88ABXX.$*.AML_037.unmapped.bam
 
 #-----------	
 # SAMTOOLS, ALIGNMENT
@@ -138,14 +138,14 @@ AML_026_L%: ~/henning/data/fastq/AB0B88ABXX.%.AML_026.unmapped.bam
 	~/tools/bwa-0.7.4/bwa aln -t 1 ~/generic/data/hg19/ucsc.hg19.fasta $^ 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
 
-bam/%.bwa.bam: ~/henning/data/fastq/%_1_sequence.txt.sai ~/henning/data/fastq/%_2_sequence.txt.sai ~/henning/data/fastq/%_1_sequence.txt.gz ~/henning/data/fastq/%_2_sequence.txt.gz
+bam/%.bwa.bam: /mnt/projects/henning/data/fastq/%_1_sequence.txt.sai /mnt/projects/henning/data/fastq/%_2_sequence.txt.sai /mnt/projects/henning/data/fastq/%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/%_2_sequence.txt.gz
 	sleep `expr $$RANDOM % 60`
 	(~/tools/bwa-0.7.4/bwa sampe ~/generic/data/hg19/ucsc.hg19.fasta $^ \
 		| ~/tools/samtools-0.1.19/samtools view -bS -) 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
 	~/tools/samtools-0.1.19/samtools sort -m 2G $@ $@.sorted 2>&1 | $(LOG)
 	mv $@.sorted.bam $@
-	rm ~/henning/data/fastq/$*_1_sequence.txt.sai ~/henning/data/fastq/$*_2_sequence.txt.sai
+	rm /mnt/projects/henning/data/fastq/$*_1_sequence.txt.sai /mnt/projects/henning/data/fastq/$*_2_sequence.txt.sai
 
 bam/%.bam.bai: bam/%.bam
 	rm -f $@
@@ -231,8 +231,8 @@ varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/generic/data/ncbi/c
 #-----------	
 # FINAL LIST
 #-----------	
-filtered-variants/%.tsv: varscan/%.varscan.snp.dbsnp.snpeff.vcf ~/henning/scripts/filter-variants.pl
-	perl ~/henning/scripts/filter-variants.pl \
+filtered-variants/%.tsv: varscan/%.varscan.snp.dbsnp.snpeff.vcf /mnt/projects/henning/scripts/filter-variants.pl
+	perl /mnt/projects/henning/scripts/filter-variants.pl \
 		$< snp \
 		--patient $* \
 		--rmsk-file ~/generic/data/hg19/hg19.rmsk.txt.gz \
