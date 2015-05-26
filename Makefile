@@ -135,12 +135,12 @@ AML_026_L%: /mnt/projects/henning/data/fastq/AB0B88ABXX.%.AML_026.unmapped.bam
 # SAMTOOLS, ALIGNMENT
 #-----------	
 %.sai: %.gz
-	~/tools/bwa-0.7.4/bwa aln -t 1 ~/generic/data/hg19/ucsc.hg19.fasta $^ 2>&1 1>$@.part | $(LOG)
+	~/tools/bwa-0.7.4/bwa aln -t 1 /mnt/projects/generic/data/hg19/ucsc.hg19.fasta $^ 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
 
 bam/%.bwa.bam: /mnt/projects/henning/data/fastq/%_1_sequence.txt.sai /mnt/projects/henning/data/fastq/%_2_sequence.txt.sai /mnt/projects/henning/data/fastq/%_1_sequence.txt.gz /mnt/projects/henning/data/fastq/%_2_sequence.txt.gz
 	sleep `expr $$RANDOM % 60`
-	(~/tools/bwa-0.7.4/bwa sampe ~/generic/data/hg19/ucsc.hg19.fasta $^ \
+	(~/tools/bwa-0.7.4/bwa sampe /mnt/projects/generic/data/hg19/ucsc.hg19.fasta $^ \
 		| ~/tools/samtools-0.1.19/samtools view -bS -) 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
 	~/tools/samtools-0.1.19/samtools sort -m 2G $@ $@.sorted 2>&1 | $(LOG)
@@ -179,13 +179,13 @@ picard/%.multiplemetrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
 picard/%.hs_metrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
 	# truseq_exome_targeted_regions.hg19.bed.chr downloaded from http://supportres.illumina.com/documents/myillumina/5dfd7e70-c4a5-405a-8131-33f683414fb7/truseq_exome_targeted_regions.hg19.bed.chr.gz
 	~/tools/samtools-0.1.19/samtools view -H bam/$*.bwa.merged.dup.bam 2>&1 1> picard/$*.truseq-for-picard.bed | $(LOG)
-	gawk 'BEGIN { OFS="\t"} {print $$1,$$2,$$3,$$6,$$4 }' ~/generic/data/illumina/truseq_exome_targeted_regions.hg19.bed.chr >> picard/$*.truseq-for-picard.bed
+	gawk 'BEGIN { OFS="\t"} {print $$1,$$2,$$3,$$6,$$4 }' /mnt/projects/generic/data/illumina/truseq_exome_targeted_regions.hg19.bed.chr >> picard/$*.truseq-for-picard.bed
 	java -Xmx2g -Djava.io.tmpdir=`pwd`/tmp -jar ~/tools/picard-tools-1.101/CalculateHsMetrics.jar \
 		BAIT_INTERVALS=picard/$*.truseq-for-picard.bed \
 		TARGET_INTERVALS=picard/$*.truseq-for-picard.bed \
 		INPUT=bam/$*.bwa.merged.dup.bam \
 		OUTPUT=$@.part \
-		REFERENCE_SEQUENCE=~/generic/data/hg19/ucsc.hg19.fasta \
+		REFERENCE_SEQUENCE=/mnt/projects/generic/data/hg19/ucsc.hg19.fasta \
 		PER_TARGET_COVERAGE=picard/$*.hs_metrics.per_target_coverage.part \
 		VALIDATION_STRINGENCY=LENIENT \
 		2>&1 | $(LOG)
@@ -198,8 +198,8 @@ picard/%.hs_metrics: bam/%.bwa.merged.dup.bam bam/%.bwa.merged.dup.bam.bai
 #-----------	
 varscan/%.varscan.snp.vcf: bam/%.normal.bwa.merged.dup.bam bam/%.tumor.bwa.merged.dup.bam bam/%.normal.bwa.merged.dup.bam.bai bam/%.tumor.bwa.merged.dup.bam.bai
 	java -jar ~/tools/varscan-2.3.6/VarScan.v2.3.6.jar somatic \
-		<(~/tools/samtools-0.1.19/samtools view -b -u -q 1 $(word 1,$^) | ~/tools/samtools-0.1.19/samtools mpileup -f ~/generic/data/hg19/ucsc.hg19.fasta -) \
-		<(~/tools/samtools-0.1.19/samtools view -b -u -q 1 $(word 2,$^) | ~/tools/samtools-0.1.19/samtools mpileup -f ~/generic/data/hg19/ucsc.hg19.fasta -) \
+		<(~/tools/samtools-0.1.19/samtools view -b -u -q 1 $(word 1,$^) | ~/tools/samtools-0.1.19/samtools mpileup -f /mnt/projects/generic/data/hg19/ucsc.hg19.fasta -) \
+		<(~/tools/samtools-0.1.19/samtools view -b -u -q 1 $(word 2,$^) | ~/tools/samtools-0.1.19/samtools mpileup -f /mnt/projects/generic/data/hg19/ucsc.hg19.fasta -) \
 		varscan/$*.varscan.part \
 		--min-coverage 2 \
 		--min-strands2 2 \
@@ -222,9 +222,9 @@ varscan/%.varscan.snp.dbsnp.snpeff.vcf: varscan/%.varscan.snp.dbsnp.vcf
 	(cd ~/tools/snpEff-3.3h; java -Xmx2g -jar snpEff.jar -v -lof hg19 -stats $(PWD)/snpeff/$*.snpeff.summary.html $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	mv $@.part $@
 
-varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf ~/generic/data/ncbi/common_no_known_medical_impact_20130930.chr.vcf
+varscan/%.varscan.snp.dbsnp.vcf: varscan/%.varscan.snp.vcf /mnt/projects/generic/data/ncbi/common_no_known_medical_impact_20130930.chr.vcf
 	PWD=$(pwd)
-	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v ~/generic/data/ncbi/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
+	(cd ~/tools/snpEff-3.3h; java -jar SnpSift.jar annotate -v /mnt/projects/generic/data/ncbi/common_no_known_medical_impact_20130930.chr.vcf $(PWD)/$< 2>&1 1>$(PWD)/$@.part) | $(LOG)
 	test -s $@.part
 	mv $@.part $@
 
@@ -235,11 +235,11 @@ filtered-variants/%.tsv: varscan/%.varscan.snp.dbsnp.snpeff.vcf /mnt/projects/he
 	perl /mnt/projects/henning/scripts/filter-variants.pl \
 		$< snp \
 		--patient $* \
-		--rmsk-file ~/generic/data/hg19/hg19.rmsk.txt.gz \
-		--simpleRepeat-file ~/generic/data/hg19/hg19.simpleRepeat.txt.gz \
-		--segdup-file ~/generic/data/hg19/hg19.genomicSuperDups.txt.gz \
-		--blacklist-file ~/generic/data/hg19/hg19.wgEncodeDacMapabilityConsensusExcludable.txt.gz \
-		--g1k-accessible ~/generic/data/hg19/paired.end.mapping.1000G..pilot.bed.gz \
-		--cosmic-mutation-file ~/generic/data/cosmic/v67/CosmicMutantExport_v67_241013.tsv \
+		--rmsk-file /mnt/projects/generic/data/hg19/hg19.rmsk.txt.gz \
+		--simpleRepeat-file /mnt/projects/generic/data/hg19/hg19.simpleRepeat.txt.gz \
+		--segdup-file /mnt/projects/generic/data/hg19/hg19.genomicSuperDups.txt.gz \
+		--blacklist-file /mnt/projects/generic/data/hg19/hg19.wgEncodeDacMapabilityConsensusExcludable.txt.gz \
+		--g1k-accessible /mnt/projects/generic/data/hg19/paired.end.mapping.1000G..pilot.bed.gz \
+		--cosmic-mutation-file /mnt/projects/generic/data/cosmic/v67/CosmicMutantExport_v67_241013.tsv \
 		2>&1 1> $@.part | $(LOG)
 	mv $@.part $@
